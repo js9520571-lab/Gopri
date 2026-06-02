@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Retro Snake Game</title>
+    <style>
+        body {
+            background-color: #111;
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+        h1 {
+            color: #00ffcc;
+            text-shadow: 0 0 10px #00ffcc;
+            margin-bottom: 10px;
+        }
+        #score-board {
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-shadow: 0 0 5px #fff;
+        }
+        canvas {
+            border: 4px solid #00ffcc;
+            background-color: #000;
+            box-shadow: 0 0 30px #00ffcc;
+        }
+        .controls {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>NEON SNAKE</h1>
+    <div id="score-board">Score: <span id="score">0</span></div>
+    <canvas id="gameCanvas" width="400" height="400"></canvas>
+    <div class="controls">Use Arrow Keys or WASD to move. Eat the red neon dots!</div>
+
+    <script>
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+        const scoreElement = document.getElementById("score");
+
+        const gridSize = 20;
+        const tileCount = canvas.width / gridSize;
+
+        let snake = [{ x: 10, y: 10 }];
+        let food = { x: 5, y: 5 };
+        let dx = 1;
+        let dy = 0;
+        let score = 0;
+        let gameSpeed = 100;
+        let gameLoop;
+
+        function start() {
+            generateFood();
+            gameLoop = setInterval(update, gameSpeed);
+        }
+
+        function update() {
+            // Move Head
+            const head = { x: snake[0].x + dx, y: snake[0].y + dy };
+
+            // Wall Collisions (Wrap around)
+            if (head.x < 0) head.x = tileCount - 1;
+            if (head.x >= tileCount) head.x = 0;
+            if (head.y < 0) head.y = tileCount - 1;
+            if (head.y >= tileCount) head.y = 0;
+
+            // Self Collision Check
+            for (let i = 0; i < snake.length; i++) {
+                if (snake[i].x === head.x && snake[i].y === head.y) {
+                    resetGame();
+                    return;
+                }
+            }
+
+            // Grow Snake or Move Forward
+            snake.unshift(head);
+            if (head.x === food.x && head.y === food.y) {
+                score += 10;
+                scoreElement.innerText = score;
+                generateFood();
+            } else {
+                snake.pop();
+            }
+
+            draw();
+        }
+
+        function draw() {
+            // Clear Screen
+            ctx.fillStyle = "#000";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw Snake
+            ctx.fillStyle = "#00ffcc";
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = "#00ffcc";
+            for (let i = 0; i < snake.length; i++) {
+                ctx.fillRect(snake[i].x * gridSize, snake[i].y * gridSize, gridSize - 2, gridSize - 2);
+            }
+
+            // Draw Food
+            ctx.fillStyle = "#ff0055";
+            ctx.shadowColor = "#ff0055";
+            ctx.fillRect(food.x * gridSize, food.y * gridSize, gridSize - 2, gridSize - 2);
+            ctx.shadowBlur = 0; // Reset blur
+        }
+
+        function generateFood() {
+            food.x = Math.floor(Math.random() * tileCount);
+            food.y = Math.floor(Math.random() * tileCount);
+            
+            // Ensure food doesn't spawn on top of the snake
+            for (let i = 0; i < snake.length; i++) {
+                if (snake[i].x === food.x && snake[i].y === food.y) {
+                    generateFood();
+                }
+            }
+        }
+
+        function resetGame() {
+            alert(`Game Over! Your final score is ${score}`);
+            snake = [{ x: 10, y: 10 }];
+            dx = 1;
+            dy = 0;
+            score = 0;
+            scoreElement.innerText = score;
+        }
+
+        // Handle Controls
+        window.addEventListener("keydown", e => {
+            switch (e.key) {
+                case "ArrowUp":
+                case "w":
+                case "W":
+                    if (dy === 0) { dx = 0; dy = -1; }
+                    break;
+                case "ArrowDown":
+                case "s":
+                case "S":
+                    if (dy === 0) { dx = 0; dy = 1; }
+                    break;
+                case "ArrowLeft":
+                case "a":
+                case "A":
+                    if (dx === 0) { dx = -1; dy = 0; }
+                    break;
+                case "ArrowRight":
+                case "d":
+                case "D":
+                    if (dx === 0) { dx = 1; dy = 0; }
+                    break;
+            }
+        });
+
+        start();
+    </script>
+</body>
+</html>
