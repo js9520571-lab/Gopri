@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3-in-1 AI Innovation Toolkit</title>
+    <style>
+        :root { --bg: #0b0f19; --card: #151f32; --accent: #3b82f6; --text: #ffffff; }
+        body { font-family: system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; max-width: 1200px; margin: 0 auto; }
+        .card { background: var(--card); padding: 20px; border-radius: 12px; border: 1px solid #223554; }
+        h1 { text-align: center; color: var(--accent); margin-bottom: 30px; }
+        h2 { font-size: 1.2rem; margin-top: 0; color: #60a5fa; }
+        textarea { width: 100%; height: 100px; background: #0b0f19; border: 1px solid #223554; color: #fff; padding: 10px; border-radius: 6px; box-sizing: border-box; resize: none; }
+        button { background: var(--accent); color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; margin-top: 10px; width: 100%; }
+        button:hover { opacity: 0.9; }
+        .output { background: #0b0f19; padding: 10px; border-radius: 6px; margin-top: 15px; border-left: 4px solid var(--accent); font-size: 0.9rem; min-height: 40px; }
+        video { width: 100%; border-radius: 6px; background: #000; transform: scaleX(-1); }
+        .tag { display: inline-block; padding: 3px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; }
+        .pos { background: #10b981; } .neg { background: #ef4444; } .neu { background: #f59e0b; }
+    </style>
+</head>
+<body>
+
+    <h1>3-in-1 AI Multi-Agent Toolkit</h1>
+
+    <div class="grid">
+        <!-- 1. EMPATHY CHECKER -->
+        <div class="card">
+            <h2>1. Empathy Check Email Validator</h2>
+            <p>Scans drafts to project emotional recipient reactions.</p>
+            <textarea id="emailInput" placeholder="Type your email draft here..."></textarea>
+            <button onclick="checkEmpathy()">Analyze Sentiment</button>
+            <div id="empathyOut" class="output">Awaiting text analysis...</div>
+        </div>
+
+        <!-- 2. SCREEN-TO-CODE BLUEPRINT -->
+        <div class="card">
+            <h2>2. Screen-to-Code Blueprint</h2>
+            <p>Hold up a paper UI sketch to simulate code generation.</p>
+            <video id="webcam" autoplay playsinline></video>
+            <button id="camBtn" onclick="startCamera()">1. Start Webcam</button>
+            <button id="scanBtn" onclick="scanBlueprint()" style="display:none; background:#10b981;">2. Capture & Generate UI</button>
+            <div id="codeOut" class="output">No UI blueprint scanned yet.</div>
+        </div>
+
+        <!-- 3. DIGITAL DOPPELGÄNGER ROUTER -->
+        <div class="card">
+            <h2>3. Digital Doppelgänger Router</h2>
+            <p>Drafts response suggestions matching your specific tone.</p>
+            <textarea id="incomingMsg" placeholder="Paste incoming message from client/friend..."></textarea>
+            <button onclick="generateReply()">Generate My Reply</button>
+            <div id="replyOut" class="output">Awaiting incoming data stream...</div>
+        </div>
+    </div>
+
+<script>
+    // 1. Empathy Checker Logic
+    function checkEmpathy() {
+        const txt = document.getElementById('emailInput').value.toLowerCase();
+        const out = document.getElementById('empathyOut');
+        if(!txt) return out.innerHTML = "Please enter text first.";
+        
+        if(txt.includes('need') || txt.includes('urgent') || txt.includes('late')) {
+            out.innerHTML = `<span class="tag neg">Anxious / Stressed (85%)</span><br><br><strong>Feedback:</strong> Tone feels demanding. Recipient might defensive. Suggest smoothing urgency markers.`;
+        } else if(txt.includes('thanks') || txt.includes('great') || txt.includes('please')) {
+            out.innerHTML = `<span class="tag pos">Positive / Motivated (90%)</span><br><br><strong>Feedback:</strong> Clear, respectful, and professional. High probability of quick buy-in.`;
+        } else {
+            out.innerHTML = `<span class="tag neu">Neutral / Informative (50%)</span><br><br><strong>Feedback:</strong> Plain text. Risk of misinterpretation. Add context or pleasantry.`;
+        }
+    }
+
+    // 2. Screen-to-Code Logic
+    async function startCamera() {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
+            document.getElementById('webcam').srcObject = stream;
+            document.getElementById('camBtn').style.display = 'none';
+            document.getElementById('scanBtn').style.display = 'block';
+        } catch(e) { alert("Webcam access rejected or unavailable."); }
+    }
+
+    function scanBlueprint() {
+        const out = document.getElementById('codeOut');
+        out.innerHTML = "<i>AI Model Analyzing layout structures...</i>";
+        setTimeout(() => {
+            out.innerHTML = `<strong>Generated Blueprint Snippet:</strong><br><pre style="background:#000; padding:5px; color:#10b981; font-size:0.8rem;">&lt;div class="navbar"&gt;\n  &lt;button class="login-btn"&gt;\n  &lt;img src="hero.png"&gt;\n&lt;/div&gt;</pre>`;
+        }, 1500);
+    }
+
+    // 3. Digital Doppelgänger Logic
+    function generateReply() {
+        const msg = document.getElementById('incomingMsg').value.toLowerCase();
+        const out = document.getElementById('replyOut');
+        if(!msg) return out.innerHTML = "Please enter an incoming message.";
+
+        if(msg.includes('meeting') || msg.includes('call') || msg.includes('zoom')) {
+            out.innerHTML = `<strong>Suggested Response:</strong><br>"Hey! Sounds great. Send over a calendar invite with the link and I'll jump on."`;
+        } else if(msg.includes('price') || msg.includes('cost') || msg.includes('how much')) {
+            out.innerHTML = `<strong>Suggested Response:</strong><br>"Hey there, thanks for checking in! I'll send over our pricing sheet doc right away."`;
+        } else {
+            out.innerHTML = `<strong>Suggested Response:</strong><br>"Got it, thanks for the heads up! Let me look into this and sync back up shortly."`;
+        }
+    }
+</script>
+</body>
+</html>
